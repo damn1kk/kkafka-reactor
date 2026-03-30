@@ -11,7 +11,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.forEach
-import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 class OffsetState<K, V> {
@@ -51,10 +50,7 @@ class OffsetState<K, V> {
 
     fun getOffsetsToCommitCount(): Int = offsetsToCommitCount.get()
 
-    fun ack(
-        topicPartition: TopicPartition,
-        offset: Long,
-    ): Int {
+    fun ack(topicPartition: TopicPartition, offset: Long): Int {
         offsetsToCommitLock.write {
             val offsetsForTopicPartition = offsetsToCommit.computeIfAbsent(topicPartition) { TreeSet() }
             offsetsForTopicPartition.add(offset)
@@ -65,7 +61,7 @@ class OffsetState<K, V> {
     }
 
     fun getOffsetsToCommit(): OffsetsToCommit {
-        offsetsToCommitLock.read {
+        offsetsToCommitLock.write {
             val result = mutableMapOf<TopicPartition, OffsetAndMetadata>()
             var batchSize = 0
             consumedOffsets.forEach { (tp, offsets) ->

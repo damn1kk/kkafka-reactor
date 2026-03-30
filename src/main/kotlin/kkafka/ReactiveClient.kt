@@ -54,7 +54,6 @@ class ReactiveClient<K, V>(
             log.info("subscribe topics: $topics")
             consumer.subscribe(topics, RebalanceListener())
         }
-        scheduler.init()
         periodicallyCommitDisposable =
             Schedulers.parallel().schedulePeriodically(
                 { scheduler.schedule { commitEvent() } },
@@ -118,10 +117,7 @@ class ReactiveClient<K, V>(
             }.publishOn(Schedulers.boundedElastic(), 1)
     }
 
-    fun ack(
-        topicPartition: TopicPartition,
-        offset: Long,
-    ) {
+    fun ack(topicPartition: TopicPartition, offset: Long) {
         log.debug("ack: t: ${topicPartition.topic()} p: ${topicPartition.partition()} o: $offset")
         val currentOffsetsToCommitCount = state.ack(topicPartition, offset)
         log.debug("getOffsetsToCommitCount: $currentOffsetsToCommitCount")

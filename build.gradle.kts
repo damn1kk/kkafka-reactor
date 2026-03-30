@@ -30,6 +30,8 @@ dependencies {
     testImplementation(platform("org.testcontainers:testcontainers-bom:2.0.3"))
     testImplementation("org.testcontainers:testcontainers-kafka")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
 }
 
 kotlin {
